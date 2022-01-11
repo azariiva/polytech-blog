@@ -8,22 +8,8 @@ import io.ktor.response.*
 import io.ktor.routing.*
 import io.ktor.sessions.*
 
-fun Application.routing() {
+fun Application.setupRoutes() {
     routing {
-        route("/login") { //routing
-            authenticate(AuthName.FORM) { //Apply auth configuration for forms
-                post {
-                    //Principal must not be null as we are authenticated
-                    val principal =
-                        call.principal<UserIdPrincipal>()!! // If auth configuration worked, it would have principal from AuthProvider
-
-                    // Set the cookie to make session auth working
-                    call.sessions.set(principal) // To keep the user logged it, we put his principal into session. It makes work the second auth configuration
-                    call.respond(HttpStatusCode.OK, "OK")
-                }
-            }
-        }
-
         route("/user_info") { // Routing
             authenticate(AuthName.SESSION) { //Apply the second auth configuration
                 get {

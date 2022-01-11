@@ -1,13 +1,13 @@
-package me.freedom4live.ktor.plugins
+package me.freedom4live.ktor
 
 import io.ktor.application.*
 import io.ktor.auth.*
-import me.freedom4live.ktor.AuthName
-import me.freedom4live.ktor.AuthProvider
-import me.freedom4live.ktor.AuthenticationException
-import me.freedom4live.ktor.FormFields
+import io.ktor.http.*
+import io.ktor.response.*
+import io.ktor.routing.*
+import io.ktor.sessions.*
 
-fun Application.authentication() {
+fun Application.setupAuth() {
     install(Authentication) { // we enable the feature
         //Configure Authentication with cookies. We tell it to use session with specified container UserIdPrincipal as an auth data from session storage
         session<UserIdPrincipal>(AuthName.SESSION) { // AuthName.SESSION is just a constant it gives a name to our auth configuration
@@ -33,6 +33,22 @@ fun Application.authentication() {
             validate { cred: UserPasswordCredential ->
                 //Here you can do what ever you want. I just mocked AuthProvider with constants, see below...
                 AuthProvider.tryAuth(cred.name, cred.password)
+            }
+        }
+    }
+
+    routing {
+        route("/login") { //routing
+            authenticate(AuthName.FORM) { //Apply auth configuration for forms
+                post {
+                    //Principal must not be null as we are authenticated
+                    val principal =
+                        call.principal<UserIdPrincipal>()!! // If auth configuration worked, it would have principal from AuthProvider
+
+                    // Set the cookie to make session auth working
+                    call.sessions.set(principal) // To keep the user logged it, we put his principal into session. It makes work the second auth configuration
+                    call.respond(HttpStatusCode.OK, "OK")
+                }
             }
         }
     }

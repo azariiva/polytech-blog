@@ -1,9 +1,9 @@
-val kotlinVersion: String by System.getProperties()
-val ktorVersion: String by System.getProperties()
-val logbackVersion: String by System.getProperties()
+val kotlinVersion: String by project
+val ktorVersion: String by project
+val logbackVersion: String by project
 
 plugins {
-    kotlin("jvm").version(System.getProperty("kotlinVersion"))
+    kotlin("jvm") version "1.5.31"
     java
     application
 }
@@ -13,6 +13,16 @@ version = "0.0.1"
 application {
     mainClass.set("io.ktor.server.netty.EngineMain")
 }
+
+java.sourceSets["main"].java.srcDirs("src")
+kotlin.sourceSets["main"].kotlin.srcDirs("src")
+sourceSets["main"].resources.srcDirs("resources")
+
+java.sourceSets["test"].java.srcDirs("test")
+kotlin.sourceSets["test"].kotlin.srcDirs("test")
+sourceSets["test"].resources.srcDirs("testresources")
+
+
 
 repositories {
     mavenCentral()
