@@ -3,9 +3,11 @@ package me.freedom4live.ktor
 import io.ktor.application.*
 import io.ktor.auth.*
 import io.ktor.http.*
+import io.ktor.request.*
 import io.ktor.response.*
 import io.ktor.routing.*
 import io.ktor.sessions.*
+import me.freedom4live.ktor.db.entity.UserCredentials
 
 fun Application.setupAuth() {
     install(Authentication) { // we enable the feature
@@ -27,12 +29,23 @@ fun Application.setupAuth() {
             passwordParamName =
                 FormFields.PASSWORD //const val USERNAME = "username"; const val PASSWORD = "password" - for example
             challenge {
-                // if field to auth
+                // if failed to auth
                 throw AuthenticationException()
             }
             validate { cred: UserPasswordCredential ->
                 //Here you can do what ever you want. I just mocked AuthProvider with constants, see below...
                 AuthProvider.tryAuth(cred.name, cred.password)
+            }
+        }
+
+        form(AuthName.SIGNUP) {
+            userParamName = FormFields.USERNAME
+            passwordParamName = FormFields.PASSWORD
+            challenge {
+                throw UserAlreadyExistException()
+            }
+            validate { cred: UserPasswordCredential ->
+                AuthProvider.tryRegister(cred.name, cred.password)
             }
         }
     }
@@ -47,7 +60,17 @@ fun Application.setupAuth() {
 
                     // Set the cookie to make session auth working
                     call.sessions.set(principal) // To keep the user logged it, we put his principal into session. It makes work the second auth configuration
-                    call.respond(HttpStatusCode.OK, "OK")
+                    call.respond(HttpStatusCode.OK, "Authenticated")
+                }
+            }
+        }
+
+        route("/register") {
+            authenticate(AuthName.SIGNUP) {
+                post {
+                    val principal = call.principal<UserIdPrincipal>()!!
+                    call.sessions.set(principal)
+                    call.respond(HttpStatusCode.OK, "Registered")
                 }
             }
         }

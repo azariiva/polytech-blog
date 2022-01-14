@@ -7,6 +7,7 @@ object Cookies {
 object AuthName {
     const val SESSION: String = "session"
     const val FORM: String = "form"
+    const val SIGNUP: String = "signup"
 }
 
 object FormFields {

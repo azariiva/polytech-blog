@@ -1,19 +1,22 @@
 package me.freedom4live.ktor
 
 import io.ktor.auth.*
+import me.freedom4live.ktor.db.entity.UserCredentials
+import me.freedom4live.ktor.db.repository.UserCredentialsExposedRepository
 
 object AuthProvider {
-
-    private const val TEST_USER_NAME = "test_user_name"
-    private const val TEST_USER_PASSWORD = "test_user_password"
-
-    fun tryAuth(userName: String, password: String): UserIdPrincipal? {
-
-        //Here you can use DB or other ways to check user and create a Principal
-        if (userName == TEST_USER_NAME && password == TEST_USER_PASSWORD) {
-            return UserIdPrincipal(TEST_USER_NAME)
+    fun tryAuth(username: String, password: String): UserIdPrincipal? {
+        return UserCredentialsExposedRepository.find(username)?.let { user ->
+            when (password) {
+                user.password -> UserIdPrincipal(user.username)
+                else -> null
+            }
         }
+    }
 
-        return null
+    fun tryRegister(username: String, password: String): UserIdPrincipal? {
+        UserCredentialsExposedRepository.find(username)?.let { return null }
+        UserCredentialsExposedRepository.add(UserCredentials(username = username, password = password))
+        return UserIdPrincipal(username)
     }
 }

@@ -1,6 +1,7 @@
 package me.freedom4live.ktor
 
 import com.fasterxml.jackson.databind.SerializationFeature
+import com.fasterxml.jackson.datatype.joda.JodaModule
 import io.ktor.application.*
 import io.ktor.auth.*
 import io.ktor.features.*
@@ -14,6 +15,7 @@ fun Application.module() {
     install(ContentNegotiation) {
         jackson {
             enable(SerializationFeature.INDENT_OUTPUT)
+            registerModule(JodaModule())
         }
     }
 
@@ -26,6 +28,8 @@ fun Application.module() {
             cookie.extensions["SameSite"] = "lax"
         }
     }
+
+    initDB()
 
     // Configure ktor to use form data auth and register relevant routes
     setupAuth()
