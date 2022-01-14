@@ -1,4 +1,4 @@
-package me.freedom4live.ktor
+package me.freedom4live.ktor.db
 
 import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource

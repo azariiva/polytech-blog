@@ -1,4 +1,4 @@
-package me.freedom4live.ktor
+package me.freedom4live.ktor.service
 
 import io.ktor.auth.*
 import me.freedom4live.ktor.db.entity.UserCredentials

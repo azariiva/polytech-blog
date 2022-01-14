@@ -1,4 +1,4 @@
-package me.freedom4live.ktor
+package me.freedom4live.ktor.rest
 
 object Cookies {
     const val AUTH_COOKIE: String = "auth"

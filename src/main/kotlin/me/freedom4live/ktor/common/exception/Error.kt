@@ -1,4 +1,4 @@
-package me.freedom4live.ktor
+package me.freedom4live.ktor.common.exception
 
 class AuthenticationException : RuntimeException()
 class AuthorizationException : RuntimeException()

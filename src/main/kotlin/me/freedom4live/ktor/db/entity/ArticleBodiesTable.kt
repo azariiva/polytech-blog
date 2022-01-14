@@ -1,10 +1,7 @@
 package me.freedom4live.ktor.db.entity
 
-import org.jetbrains.exposed.sql.Expression
 import org.jetbrains.exposed.sql.Table
-import org.jetbrains.exposed.sql.jodatime.CurrentDateTime
 import org.jetbrains.exposed.sql.jodatime.datetime
-import java.util.*
 
 object ArticleBodiesTable : Table("article_bodies") {
     val id = uuid(name = "id")

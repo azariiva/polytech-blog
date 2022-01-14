@@ -7,6 +7,10 @@ import io.ktor.auth.*
 import io.ktor.features.*
 import io.ktor.jackson.*
 import io.ktor.sessions.*
+import me.freedom4live.ktor.db.initDB
+import me.freedom4live.ktor.rest.Cookies
+import me.freedom4live.ktor.rest.setupAuth
+import me.freedom4live.ktor.rest.setupRoutes
 
 fun main(args: Array<String>): Unit =
     io.ktor.server.netty.EngineMain.main(args) // Starts as NettyEngine, it finds extension functions like module to let them bootstrap the application

@@ -1,4 +1,4 @@
-package me.freedom4live.ktor
+package me.freedom4live.ktor.rest
 
 import io.ktor.application.*
 import io.ktor.auth.*
@@ -7,9 +7,8 @@ import io.ktor.http.*
 import io.ktor.request.*
 import io.ktor.response.*
 import io.ktor.routing.*
-import io.ktor.sessions.*
+import me.freedom4live.ktor.common.exception.*
 import me.freedom4live.ktor.db.repository.ArticleBodiesExposedRepository
-import me.freedom4live.ktor.db.repository.UserCredentialsExposedRepository
 import me.freedom4live.ktor.rest.entity.ArticleCreateRequest
 import java.util.*
 

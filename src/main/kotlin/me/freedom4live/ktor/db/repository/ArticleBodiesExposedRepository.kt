@@ -1,14 +1,11 @@
 package me.freedom4live.ktor.db.repository
 
-import kotlinx.coroutines.selects.select
 import me.freedom4live.ktor.db.entity.ArticleBodiesTable
 import me.freedom4live.ktor.db.entity.ArticleBody
 import me.freedom4live.ktor.rest.entity.ArticleCreateRequest
 import org.jetbrains.exposed.sql.Column
-import org.jetbrains.exposed.sql.UUIDColumnType
 import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.select
-import org.jetbrains.exposed.sql.transactions.TransactionManager
 import org.jetbrains.exposed.sql.transactions.transaction
 import java.nio.ByteBuffer
 import java.util.*

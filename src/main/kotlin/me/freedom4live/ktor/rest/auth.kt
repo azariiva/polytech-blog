@@ -1,13 +1,14 @@
-package me.freedom4live.ktor
+package me.freedom4live.ktor.rest
 
 import io.ktor.application.*
 import io.ktor.auth.*
 import io.ktor.http.*
-import io.ktor.request.*
 import io.ktor.response.*
 import io.ktor.routing.*
 import io.ktor.sessions.*
-import me.freedom4live.ktor.db.entity.UserCredentials
+import me.freedom4live.ktor.common.exception.AuthenticationException
+import me.freedom4live.ktor.common.exception.UserAlreadyExistException
+import me.freedom4live.ktor.service.AuthProvider
 
 fun Application.setupAuth() {
     install(Authentication) { // we enable the feature

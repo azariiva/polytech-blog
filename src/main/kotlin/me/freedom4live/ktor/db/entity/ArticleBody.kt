@@ -1,9 +1,6 @@
 package me.freedom4live.ktor.db.entity
 
 import com.fasterxml.jackson.annotation.JsonIgnore
-import com.fasterxml.jackson.annotation.JsonProperty
-import com.fasterxml.jackson.databind.annotation.JsonSerialize
-import com.fasterxml.jackson.datatype.joda.ser.JodaDateSerializerBase
 import org.jetbrains.exposed.sql.ResultRow
 import org.joda.time.DateTime
 import java.util.*
