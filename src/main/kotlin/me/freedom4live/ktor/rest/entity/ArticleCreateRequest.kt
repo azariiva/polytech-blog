@@ -5,6 +5,6 @@ import com.fasterxml.jackson.annotation.JsonProperty
 data class ArticleCreateRequest(
     @param:JsonProperty(required = true)
     val title: String,
-    @param:JsonProperty
+    @param:JsonProperty("body")
     val text: String?
 )

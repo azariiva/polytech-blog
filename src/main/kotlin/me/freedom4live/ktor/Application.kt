@@ -1,10 +1,14 @@
 package me.freedom4live.ktor
 
+import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.SerializationFeature
 import com.fasterxml.jackson.datatype.joda.JodaModule
+import freemarker.cache.ClassTemplateLoader
+import freemarker.core.HTMLOutputFormat
 import io.ktor.application.*
 import io.ktor.auth.*
 import io.ktor.features.*
+import io.ktor.freemarker.*
 import io.ktor.jackson.*
 import io.ktor.sessions.*
 import me.freedom4live.ktor.db.initDB
@@ -19,6 +23,7 @@ fun Application.module() {
     install(ContentNegotiation) {
         jackson {
             enable(SerializationFeature.INDENT_OUTPUT)
+            disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
             registerModule(JodaModule())
         }
     }
@@ -31,6 +36,11 @@ fun Application.module() {
             cookie.path = "/"  // We cookies should work
             cookie.extensions["SameSite"] = "lax"
         }
+    }
+
+    install(FreeMarker) { //Using FreeMarker template engine
+        templateLoader = ClassTemplateLoader(this::class.java.classLoader, "/templates")
+        outputFormat = HTMLOutputFormat.INSTANCE
     }
 
     initDB()

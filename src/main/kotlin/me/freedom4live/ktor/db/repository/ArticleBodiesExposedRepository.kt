@@ -3,9 +3,7 @@ package me.freedom4live.ktor.db.repository
 import me.freedom4live.ktor.db.entity.ArticleBodiesTable
 import me.freedom4live.ktor.db.entity.ArticleBody
 import me.freedom4live.ktor.rest.entity.ArticleCreateRequest
-import org.jetbrains.exposed.sql.Column
-import org.jetbrains.exposed.sql.insert
-import org.jetbrains.exposed.sql.select
+import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.transactions.transaction
 import java.nio.ByteBuffer
 import java.util.*
@@ -17,6 +15,22 @@ object ArticleBodiesExposedRepository {
                 .select { ArticleBodiesTable.id eq id }
                 .takeIf { !it.empty() }
                 ?.let { ArticleBody.fromResultRow(it.first()) }
+        }
+
+    fun find(author: String): List<ArticleBody> =
+        transaction {
+            ArticleBodiesTable
+                .select { ArticleBodiesTable.author eq author }
+                .orderBy(ArticleBodiesTable.createdTimestamp to SortOrder.DESC)
+                .map(ArticleBody::fromResultRow)
+        }
+
+    fun find(): List<ArticleBody> =
+        transaction {
+            ArticleBodiesTable
+                .selectAll()
+                .orderBy(ArticleBodiesTable.createdTimestamp to SortOrder.DESC)
+                .map(ArticleBody::fromResultRow)
         }
 
     @Suppress("UNCHECKED_CAST")

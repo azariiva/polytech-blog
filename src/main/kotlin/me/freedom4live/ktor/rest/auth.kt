@@ -61,7 +61,7 @@ fun Application.setupAuth() {
 
                     // Set the cookie to make session auth working
                     call.sessions.set(principal) // To keep the user logged it, we put his principal into session. It makes work the second auth configuration
-                    call.respond(HttpStatusCode.OK, "Authenticated")
+                    call.respondRedirect("/")
                 }
             }
         }
@@ -74,6 +74,11 @@ fun Application.setupAuth() {
                     call.respond(HttpStatusCode.OK, "Registered")
                 }
             }
+        }
+
+        post("/logout") {
+            call.sessions.clear<UserIdPrincipal>()
+            call.respondRedirect("/")
         }
     }
 }

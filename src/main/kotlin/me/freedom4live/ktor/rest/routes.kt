@@ -3,10 +3,13 @@ package me.freedom4live.ktor.rest
 import io.ktor.application.*
 import io.ktor.auth.*
 import io.ktor.features.*
+import io.ktor.freemarker.*
 import io.ktor.http.*
+import io.ktor.http.content.*
 import io.ktor.request.*
 import io.ktor.response.*
 import io.ktor.routing.*
+import io.ktor.sessions.*
 import me.freedom4live.ktor.common.exception.*
 import me.freedom4live.ktor.db.repository.ArticleBodiesExposedRepository
 import me.freedom4live.ktor.rest.entity.ArticleCreateRequest
@@ -14,6 +17,40 @@ import java.util.*
 
 fun Application.setupRoutes() {
     routing {
+        static("/static") {
+            resources("/static")
+        }
+
+        get("/") {
+            call.respondRedirect("/feed")
+        }
+
+        get("feed/{username?}") {
+            val username = call.parameters["username"]
+            val sessionPrincipal = call.sessions.get<UserIdPrincipal>()
+
+            call.respond(
+                FreeMarkerContent(
+                    "feed.ftl",
+                    username?.let { author ->
+                        mapOf(
+                            "title" to "\uD83D\uDC64 ${author}'s blog",
+                            "articles" to ArticleBodiesExposedRepository.find(author),
+                            "userIdPrincipal" to sessionPrincipal
+                        )
+                    } ?: mapOf(
+                        "title" to "\uD83C\uDFE0 Home feed",
+                        "articles" to ArticleBodiesExposedRepository.find(),
+                        "userIdPrincipal" to sessionPrincipal
+                    )
+                )
+            )
+        }
+
+        get("/login") {
+            call.respond(FreeMarkerContent("login.ftl", null))
+        }
+
         route("/user_info") { // Routing
             authenticate(AuthName.SESSION) { //Apply the second auth configuration
                 get {
@@ -25,7 +62,7 @@ fun Application.setupRoutes() {
             }
         }
 
-        route("/article") {
+        route("/article/submit") {
             authenticate(AuthName.SESSION) {
                 post {
                     val principal = call.principal<UserIdPrincipal>()!!
@@ -42,8 +79,14 @@ fun Application.setupRoutes() {
             } catch (e: IllegalArgumentException) {
                 throw ArticleNotFoundException()
             }
-            val article = ArticleBodiesExposedRepository.find(articleID) ?:throw ArticleNotFoundException()
-            call.respond(HttpStatusCode.OK, article)
+            val article = ArticleBodiesExposedRepository.find(articleID) ?: throw ArticleNotFoundException()
+            val sessionPrincipal = call.sessions.get<UserIdPrincipal>()
+            call.respond(
+                FreeMarkerContent(
+                    "article.ftl",
+                    mapOf("article" to article, "userIdPrincipal" to sessionPrincipal)
+                )
+            )
         }
 
         install(StatusPages) { //Install special feature
