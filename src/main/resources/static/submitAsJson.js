@@ -30,6 +30,9 @@ function submitAsJSON($form) {
         type: "post",
         url: url,
         data: JSONString,
-        contentType: "application/json"
+        contentType: "application/json",
+        error: function (param) {
+            console.log(param)
+        }
     });
 }

@@ -2,6 +2,7 @@ package me.freedom4live.ktor.rest
 
 import io.ktor.application.*
 import io.ktor.auth.*
+import io.ktor.features.*
 import io.ktor.http.*
 import io.ktor.response.*
 import io.ktor.routing.*
@@ -66,12 +67,12 @@ fun Application.setupAuth() {
             }
         }
 
-        route("/register") {
+        route("/signup") {
             authenticate(AuthName.SIGNUP) {
                 post {
                     val principal = call.principal<UserIdPrincipal>()!!
                     call.sessions.set(principal)
-                    call.respond(HttpStatusCode.OK, "Registered")
+                    call.respondRedirect("/")
                 }
             }
         }
@@ -79,6 +80,15 @@ fun Application.setupAuth() {
         post("/logout") {
             call.sessions.clear<UserIdPrincipal>()
             call.respondRedirect("/")
+        }
+    }
+
+    install(StatusPages) {
+        exception<UserAlreadyExistException> { cause ->
+            call.respond(HttpStatusCode.Conflict)
+        }
+        exception<AuthenticationException> { cause -> //We can specify any response for any exception type
+            call.respond(HttpStatusCode.Unauthorized)
         }
     }
 }

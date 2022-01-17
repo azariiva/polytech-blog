@@ -10,7 +10,9 @@ import io.ktor.request.*
 import io.ktor.response.*
 import io.ktor.routing.*
 import io.ktor.sessions.*
-import me.freedom4live.ktor.common.exception.*
+import me.freedom4live.ktor.common.exception.ArticleNotFoundException
+import me.freedom4live.ktor.common.exception.AuthorizationException
+import me.freedom4live.ktor.common.exception.UserNotFoundException
 import me.freedom4live.ktor.db.repository.ArticleBodiesExposedRepository
 import me.freedom4live.ktor.rest.entity.ArticleCreateRequest
 import java.util.*
@@ -51,15 +53,8 @@ fun Application.setupRoutes() {
             call.respond(FreeMarkerContent("login.ftl", null))
         }
 
-        route("/user_info") { // Routing
-            authenticate(AuthName.SESSION) { //Apply the second auth configuration
-                get {
-                    //Principal must not be null as we are authenticated
-                    val principal =
-                        call.principal<UserIdPrincipal>()!! //As we put principal into session after login, it must be there
-                    call.respond(HttpStatusCode.OK, principal) //Returns OK and the principal
-                }
-            }
+        get("/signup") {
+            call.respond(FreeMarkerContent("signup.ftl", null))
         }
 
         route("/article/submit") {
@@ -91,14 +86,8 @@ fun Application.setupRoutes() {
 
         install(StatusPages) { //Install special feature
             //Here you can specify responses on exceptions
-            exception<AuthenticationException> { cause -> //We can specify any response for any exception type
-                call.respond(HttpStatusCode.Unauthorized)
-            }
             exception<AuthorizationException> { cause ->
                 call.respond(HttpStatusCode.Forbidden)
-            }
-            exception<UserAlreadyExistException> { cause ->
-                call.respond(HttpStatusCode.Conflict)
             }
             exception<UserNotFoundException> { cause ->
                 call.respond(HttpStatusCode.PreconditionFailed)
