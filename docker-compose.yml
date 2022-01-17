@@ -1,0 +1,72 @@
+version: '3'
+
+services:
+  db:
+    image: mysql:8
+    container_name: PolytechBlogMySqlDb
+    restart: always
+    volumes:
+      - mysql-data:/var/lib/mysql
+      - ./src/docker/config/db/dbinit.sql:/docker-entrypoint-initdb.d/init.sql:ro
+    env_file:
+      - ./src/docker/config/db/db.conf
+    ports:
+      - "3306:3306"
+    deploy:
+      resources:
+        limits:
+          cpus: '0.6'
+          memory: 2048M
+        reservations:
+          cpus: '0.1'
+          memory: 1536M
+  liquibase:
+    image: liquibase/liquibase
+    container_name: PolytechBlogLiquibase
+    restart: 'no'
+    depends_on:
+      - db
+    environment:
+      - INSTALL_MYSQL=true
+    env_file:
+      - ./src/docker/config/db/db.conf
+    command: [
+      './wait_for_port.sh',
+      "db:3306",
+      "--",
+      "./liquibase_policy_init.sh"
+    ]
+    volumes:
+      - ./src/docker/config/db/liquibase/changelog:/liquibase/changelog:ro
+      - ./src/docker/config/db/liquibase/liquibase_policy_init.sh:/liquibase/liquibase_policy_init.sh:ro
+      - ./src/docker/config/db/liquibase/wait_for_port.sh:/liquibase/wait_for_port.sh:ro
+    deploy:
+      resources:
+        limits:
+          cpus: '0.1'
+          memory: 1024M
+        reservations:
+          cpus: '0.01'
+          memory: 384M
+  app: # TODO: wait until liquibase perform migrations
+    build: .
+    container_name: PolytechBlogService
+    restart: always
+    depends_on:
+      - db
+      - liquibase
+    env_file:
+      - ./src/docker/config/db/db.conf
+    ports:
+      - "8080:8080"
+    deploy:
+      resources:
+        limits:
+          cpus: '0.1'
+          memory: 1024M
+        reservations:
+          cpus: '0.01'
+          memory: 384M
+volumes:
+  mysql-data:
+    external: false

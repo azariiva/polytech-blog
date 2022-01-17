@@ -1,0 +1,25 @@
+databaseChangeLog:
+  - changeSet:
+      id: create-table-users
+      author: IRZaripov
+      comment: "Создание таблицы данных пользователей"
+      changes:
+        - createTable: 
+            tableName: user_credentials
+            remarks: "Таблица данных пользователей"
+            columns:
+              - column:
+                  name: username
+                  type: VARCHAR(255)
+                  remarks: "Логин пользователя"
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+                    unique: true
+              - column:
+                  name: password
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
+                    primaryKey: false
+                    unique: false

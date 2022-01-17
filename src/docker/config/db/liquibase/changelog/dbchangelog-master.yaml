@@ -1,0 +1,14 @@
+databaseChangeLog:
+  - property:
+      name: now
+      value: now()
+      dbms: mysql
+  - property:
+      name: now_s
+      value: unix_timestamp()
+      dbms: mysql
+  
+  - include:
+      file: changelog/init/create-table-users.yaml
+  - includeAll:
+      path: changelog/init

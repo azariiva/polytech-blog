@@ -1,1 +1,1 @@
-rootProject.name = "authentication-in-ktor-server-using-form-data"
+rootProject.name = "polytech-blog"
